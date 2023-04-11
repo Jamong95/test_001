@@ -2,7 +2,6 @@ import sqlite3
 import datetime
 import json
 import requests
-import os
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QMainWindow, QPlainTextEdit, QSpinBox
 
 try:
@@ -23,8 +22,24 @@ class LoggedInWindow(QMainWindow):
 
         self.text_edit = QPlainTextEdit(self)
 
+        # Create widgets for search term and number of repetitions
+        self.search_lbl = QLabel('Search Term:', self)
+        self.search_txt = QLineEdit(self)
+        self.repeat_lbl = QLabel('Repeat:', self)
+        self.repeat_spin = QSpinBox(self)
+        self.repeat_spin.setRange(1, 100)
+        self.search_btn = QPushButton('Search', self)
+
+        # Connect signal to slot
+        self.search_btn.clicked.connect(self.search)
+
         # Create layout
         layout = QVBoxLayout()
+        layout.addWidget(self.search_lbl)
+        layout.addWidget(self.search_txt)
+        layout.addWidget(self.repeat_lbl)
+        layout.addWidget(self.repeat_spin)
+        layout.addWidget(self.search_btn)
         layout.addWidget(self.text_edit)
 
         central_widget = QWidget()
@@ -100,12 +115,7 @@ class Login(QWidget):
         if member is not None:
             QMessageBox.information(self, 'Login', 'Logged in successfully!')
             self.hide()
-
-            # Run the AutoHotkey script
-            script_path = r'C:\Users\pc\Desktop\코딩\test.ahk' # Replace with your actual script path
-
-            # Run the script using AutoHotkey
-            os.system(f'autohotkey.exe "{script_path}"')
+            self.logged_in_window = LoggedInWindow()
         else:
             QMessageBox.warning(self, 'Login', 'Invalid name or password')
 
